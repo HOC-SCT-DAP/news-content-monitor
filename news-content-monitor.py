@@ -4,6 +4,7 @@ import os
 import nltk
 from datetime import datetime, timezone
 from readability import Readability
+from bs4 import BeautifulSoup  # Added to clean HTML from the body text
 
 # Ensure necessary NLP data is present
 try:
@@ -14,18 +15,40 @@ except LookupError:
 def get_reading_score(text):
     """
     Calculates Flesch Reading Ease.
-    Requires at least 100 words for full accuracy, but we 
-    provide a fallback for short titles/teasers.
+    Readability library strictly requires 100+ words for accuracy.
     """
+    if not text:
+        return "No text"
+    
     word_count = len(text.split())
-    if not text or word_count < 5:
-        return 0.0
+    if word_count < 100:
+        return f"Insufficient text ({word_count} words)"
+    
     try:
         r = Readability(text)
-        # Flesch Reading Ease is the standard for UK 'Plain English'
         return round(r.flesch_reading_ease().score, 2)
-    except:
-        return 0.0
+    except Exception:
+        return "Error calculating score"
+
+def fetch_full_article_text(news_id):
+    """
+    Fetches the full article detail and strips HTML to get clean text.
+    """
+    url = f"https://www.parliament.uk/api/content/news/{news_id}/"
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        data = response.json().get('value', {})
+        
+        # Combine intro and body HTML
+        raw_html = f"{data.get('intro', '')} {data.get('body', '')}"
+        
+        # Use BeautifulSoup to get clean text without HTML tags
+        soup = BeautifulSoup(raw_html, 'html.parser')
+        return soup.get_text(separator=' ', strip=True)
+    except Exception as e:
+        print(f"  Error fetching details for ID {news_id}: {e}")
+        return ""
 
 def fetch_committee_news(committee_map, cutoff_date):
     if cutoff_date.tzinfo is None:
@@ -40,14 +63,15 @@ def fetch_committee_news(committee_map, cutoff_date):
             next(reader, None) 
             existing_ids = {row[0].strip() for row in reader if row}
 
+    file_exists = os.path.exists(file_path) and os.path.getsize(file_path) > 0
+
     with open(file_path, 'a', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
         
-        if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
+        if not file_exists:
             writer.writerow([
                 'News ID', 'Committee ID', 'Committee Name', 'Heading', 
-                'Heading Word Count', 'Heading Readability', 'Teaser', 
-                'Teaser Word Count', 'Teaser Readability', 'Date Published'
+                'Teaser', 'Full Text Word Count', 'Full Text Readability', 'Date Published'
             ])
 
         for cttee_id, cttee_name in committee_map.items():
@@ -75,22 +99,26 @@ def fetch_committee_news(committee_map, cutoff_date):
                     if pub_date < cutoff_date:
                         continue
 
+                    # 1. Get the basics from the feed
                     heading = val.get('heading', '').strip()
                     teaser = val.get('teaser', '').strip()
+
+                    # 2. Fetch the FULL article text from the specific endpoint
+                    print(f"    Fetching full content for news ID: {news_id}...")
+                    full_text = fetch_full_article_text(news_id)
                     
-                    h_words = len(heading.split())
-                    t_words = len(teaser.split())
+                    # 3. Process the full text
+                    word_count = len(full_text.split())
+                    readability_score = get_reading_score(full_text)
                     
                     writer.writerow([
                         news_id,
                         cttee_id,
                         cttee_name,
                         heading,
-                        h_words,
-                        get_reading_score(heading),
                         teaser,
-                        t_words,
-                        get_reading_score(teaser),
+                        word_count,
+                        readability_score,
                         pub_date_str
                     ])
                     
@@ -98,6 +126,6 @@ def fetch_committee_news(committee_map, cutoff_date):
                 print(f"  Skipping {cttee_name} due to error: {e}")
 
 if __name__ == "__main__":
-    # Example usage
+    # Example usage: Look for news from the start of 2024 onwards
     committees = {24: "Defence Committee", 62: "Justice Committee"}
-    fetch_committee_news(committees, datetime(2026, 1, 1))
+    fetch_committee_news(committees, datetime(2024, 1, 1))
