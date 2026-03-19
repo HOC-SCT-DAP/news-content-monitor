@@ -17,9 +17,7 @@ def generate_github_visuals(file_path):
     plt.ylabel('')
     plt.tight_layout()
     
-    # Save in both formats
-    plt.savefig('committee_avg.pdf')
-    plt.savefig('committee_avg.svg') 
+    plt.savefig('docs/committee_avg.svg') 
     plt.close()
 
     # --- Chart 2: Monthly Heading Trend ---
@@ -38,9 +36,7 @@ def generate_github_visuals(file_path):
     plt.ylabel('Average Words')
     plt.tight_layout()
 
-    # Save in both formats
-    plt.savefig('monthly_trend.pdf')
-    plt.savefig('monthly_trend.svg')
+    plt.savefig('docs/monthly_trend.svg')
     plt.close()
 
     print("Success! Generated SVG (for GitHub/HTML) and PDF (for reports).")

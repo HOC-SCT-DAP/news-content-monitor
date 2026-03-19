@@ -56,7 +56,7 @@ def fetch_committee_news(committee_map, cutoff_date):
     if cutoff_date.tzinfo is None:
         cutoff_date = cutoff_date.replace(tzinfo=timezone.utc)
 
-    file_path = 'committee_news.csv'
+    file_path = 'docs/committee_news.csv'
     
     existing_ids = set()
     if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
