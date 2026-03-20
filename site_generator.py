@@ -66,8 +66,8 @@ def generate_index_html(csv_path, output_dir='docs'):
         
         <h2>Visual Trends</h2>
         <div class="visuals">
-            <img src="monthly_trend.svg" alt="Monthly Trend" href="monthly_trend.svg">
-            <img src="committee_avg.svg" alt="Committee Averages" href="committee_avg.svg">
+            <img src="monthly_trend.svg" alt="Monthly Trend" href="https://james-n-bowman.github.io/news-content-monitor/monthly_trend.svg">
+            <img src="committee_avg.svg" alt="Committee Averages" href="https://james-n-bowman.github.io/news-content-monitor/committee_avg.svg">
         </div>
 
         <h2>Latest 30 Updates</h2>
