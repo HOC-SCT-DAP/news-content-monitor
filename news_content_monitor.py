@@ -60,14 +60,14 @@ def fetch_committee_news(committee_map, cutoff_date):
     
     existing_ids = set()
     if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
-        with open(file_path, 'r', newline='', encoding='utf-8') as f:
+        with open(file_path, 'r', newline='', encoding='utf-8-sig') as f:
             reader = csv.reader(f)
             next(reader, None) 
             existing_ids = {row[0].strip() for row in reader if row}
 
     file_exists = os.path.exists(file_path) and os.path.getsize(file_path) > 0
 
-    with open(file_path, 'a', newline='', encoding='utf-8') as csvfile:
+    with open(file_path, 'a', newline='', encoding='utf-8-sig') as csvfile:
         writer = csv.writer(csvfile)
         
         if not file_exists:

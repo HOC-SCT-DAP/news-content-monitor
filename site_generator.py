@@ -70,7 +70,7 @@ def generate_index_html(csv_path, output_dir='docs'):
             <a href="https://james-n-bowman.github.io/news-content-monitor/committee_avg.svg"><img src="committee_avg.svg" alt="Committee Averages"></a>
         </div>
 
-        <h2>Latest 30 Updates</h2>
+        <h2>Latest 30 headlines with more than 10 words</h2>
         <table>
             <thead>
                 <tr>
@@ -79,7 +79,7 @@ def generate_index_html(csv_path, output_dir='docs'):
                     <th>Heading</th>
                     <th>Heading word count</th>
                     <th>Article word count</th>
-                    <th>Readability score</th>
+                    <th>Article readability score</th>
                 </tr>
             </thead>
             <tbody>
