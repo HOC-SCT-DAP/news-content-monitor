@@ -66,8 +66,8 @@ def generate_index_html(csv_path, output_dir='docs'):
         
         <h2>Visual Trends</h2>
         <div class="visuals">
-            <a href="https://james-n-bowman.github.io/news-content-monitor/monthly_trend.svg"><img src="monthly_trend.svg" alt="Monthly Trend"></a>
-            <a href="https://james-n-bowman.github.io/news-content-monitor/committee_avg.svg"><img src="committee_avg.svg" alt="Committee Averages"></a>
+            <a href="https://hoc-sct-dap.github.io/news-content-monitor/monthly_trend.svg"><img src="monthly_trend.svg" alt="Monthly Trend"></a>
+            <a href="https://hoc-sct-dap.github.io/news-content-monitor/committee_avg.svg"><img src="committee_avg.svg" alt="Committee Averages"></a>
         </div>
 
         <h2>Latest 30 headlines with more than 10 words</h2>
